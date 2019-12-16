@@ -153,4 +153,40 @@ CREATE OR REPLACE PACKAGE BODY TABLEROS_PKG AS
         WHERE ID_TABLERO = P_ID_TABLERO AND X = P_X AND Y = P_Y;
     END;
 
+    --Otorga letras al usuario hasta que 7.
+    PROCEDURE OTORGAR_FICHAS_PR(P_ID_TABLERO NUMBER, P_ID_USUARIO VARCHAR2(25)) IS
+        V_LETRA VARCHAR2(1);
+    BEGIN
+        --HACER ESTO HASTA QUE EL COUNT DE LETRAS_USUARIOS_TABLERO = 7:
+            --1. Tomar 1 ficha random de LETRAS_TABLERO donde CANTIDAD_DISPONIBLE > 0, guardar ID de LETRA en V_LETRA
+            --2. Agregar a LETRAS_USUARIO_TABLERO un registro de cada una de estas letras. (insert P_ID_TABLERO, P_ID_USUARIO, V_LETRA)
+            --3. Validación cuando no hay suficientes letras en LETRAS_TABLERO para otorgar.
+    END;
+
+    --Validar palabra
+    PROCEDURE VALIDAR_PALABRA_PR;
+
+    --Otorgar puntos
+    PROCEDURE OTORGAR_PUNTOS_PR(P_ID_TABLERO NUMBER, P_JUGADOR VARCHAR2(25), P_PUNTOS NUMBER) IS
+        V_JUGADOR_1 VARCHAR2(25);
+        V_JUGADOR_2 VARCHAR2(25);
+        V_PUNTAJE_J1 NUMBER;
+        V_PUNTAJE_J2 NUMBER;
+    BEGIN
+
+        SELECT JUGADOR_1, JUGADOR_2, PUNTAJE_JG_1, PUNTAJE_JG_2 INTO V_JUGADOR_1, V_JUGADOR_2, V_PUNTAJE_J1, V_PUNTAJE_J2
+        FROM TABLERO
+        WHERE ID = P_ID_TABLERO;
+
+        IF P_JUGADOR = V_JUGADOR_1 THEN
+            UPDATE TABLERO
+            SET PUNTAJE_JG_1 = V_PUNTAJE_J1 + P_PUNTOS
+            WHERE ID = P_ID_TABLERO;
+        ELSIF P_JUGADOR = V_JUGADOR_2 THEN
+            UPDATE TABLERO
+            SET PUNTAJE_JG_2 = V_PUNTAJE_J2 + P_PUNTOS
+            WHERE ID = P_ID_TABLERO;
+        END IF;
+    END;
+
 END TABLEROS_PKG;

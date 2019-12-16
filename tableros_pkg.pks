@@ -6,14 +6,24 @@ CREATE OR REPLACE PACKAGE TABLEROS_PKG AS
     --Generar las letras por tablero.
     PROCEDURE GENERAR_LETRAS_PR(P_ID_TABLERO NUMBER);
 
-    --Generar casillas por tablero
+    --Generar casillas por tablero.
     PROCEDURE GENERAR_CASILLAS_PR(P_ID_TABLERO NUMBER);
 
-    --Inicializar letra - tablero
+    --Inicializar letra - tablero.
     PROCEDURE INICIALIZAR_LETRA_PR(P_ID_TABLERO NUMBER, P_ID_LETRA VARCHAR2(1), P_CANTIDAD NUMBER);
 
-    --Agregar bonus a casillas del tablero
+    --Agregar bonus a casillas del tablero.
     PROCEDURE AGREGAR_BONUS_PR(P_ID_TABLERO NUMBER, P_X NUMBER, P_Y NUMBER, P_BONUS VARCHAR2(2));
+
+    --Otorga letras al usuario hasta que 7.
+    PROCEDURE OTORGAR_FICHAS_PR(P_ID_TABLERO NUMBER, P_ID_USUARIO VARCHAR2(25));
+
+    --Validar palabra
+    --NECESITAMOS RECIBIR UNA LISTA DE LETRAS Y SUS COORDENADAS
+    PROCEDURE VALIDAR_PALABRA_PR;
+
+    --Otorgar puntos
+    PROCEDURE OTORGAR_PUNTOS_PR(P_ID_TABLERO NUMBER, P_JUGADOR VARCHAR2(25));
 
 END TABLEROS_PKG;
 
