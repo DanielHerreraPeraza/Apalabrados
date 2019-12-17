@@ -5,5 +5,4 @@ INTO TABLE PALABRA
 fields terminated by ","
 (
 	palabra
-	
 )
