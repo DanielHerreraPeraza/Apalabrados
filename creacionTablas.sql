@@ -83,3 +83,15 @@ BEGIN
   INTO   :new.id
   FROM   dual;
 END;
+
+CREATE SEQUENCE palabra_seq START WITH 1;
+
+CREATE OR REPLACE TRIGGER palabra_bir
+BEFORE INSERT ON PALABRA
+FOR EACH ROW
+
+BEGIN
+  SELECT palabra_seq.NEXTVAL
+  INTO   :new.id
+  FROM   dual;
+END;

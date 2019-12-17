@@ -1,5 +1,5 @@
 LOAD DATA
-INFILE 'C:\Users\sergi\Documents\GitHub\Apalabrados\palabras_data.dat'
+INFILE 'C:\Users\Pablo\Documents\GitHub\Apalabrados\palabras_data.dat'
 TRUNCATE
 INTO TABLE PALABRA
 fields terminated by ","
