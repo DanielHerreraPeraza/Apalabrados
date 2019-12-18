@@ -212,11 +212,16 @@ CREATE OR REPLACE PACKAGE BODY TABLEROS_PKG AS
         LETRA               VARCHAR2(2)   := '';
         posX                NUMBER        := 0;
         posY                NUMBER        := 0;
-        tmpCompare          NUMBER        := 0;
+        tmpCompareX         NUMBER        := 0;
+        tmpCompareY         NUMBER        := 0;
         COORDENADAS_VALIDAS NUMBER        := 1;
         ES_HORIZONTAL       NUMBER        := 1;
         ES_VERTICAL         NUMBER        := 1;
+        IND_PRIMER_PALABRA  VARCHAR2(2)   := 'S';
+        IND_CENTRO          VARCHAR2(1)   := 'N';
     BEGIN
+        SELECT IND_PRIMER_PALABRA FROM TABLERO WHERE ID_TABLERO = P_ID_TABLERO;
+
         P_PUNTOS := 0;
         FOR i IN (WITH DATA AS
                            (SELECT P_LETRAS str
@@ -248,8 +253,8 @@ CREATE OR REPLACE PACKAGE BODY TABLEROS_PKG AS
                                     IF TOTAL_LETRAS = 1 THEN
                                         SELECT TO_NUMBER(j.str) INTO posX FROM dual;
                                     ELSE
-                                        SELECT TO_NUMBER(j.str) INTO tmpCompare FROM dual;
-                                        IF posX != tmpCompare THEN
+                                        SELECT TO_NUMBER(j.str) INTO tmpCompareX FROM dual;
+                                        IF posX != tmpCompareX THEN
                                             ES_HORIZONTAL := 0;
                                         end if;
                                     end if;
@@ -259,11 +264,15 @@ CREATE OR REPLACE PACKAGE BODY TABLEROS_PKG AS
                                     IF TOTAL_LETRAS = 1 THEN
                                         SELECT TO_NUMBER(j.str) INTO posY FROM dual;
                                     ELSE
-                                        SELECT TO_NUMBER(j.str) INTO tmpCompare FROM dual;
-                                        IF posY != tmpCompare THEN
+                                        SELECT TO_NUMBER(j.str) INTO tmpCompareY FROM dual;
+                                        IF posY != tmpCompareY THEN
                                             ES_VERTICAL := 0;
                                         end if;
                                     end if;
+                                end if;
+
+                                IF (posX = 7 AND posY = 7) OR (tmpCompareX = 7 AND tmpCompareY = 7) THEN
+                                    IND_CENTRO := 'S';
                                 end if;
 
                                 COUNTER := COUNTER + 1;
@@ -272,6 +281,10 @@ CREATE OR REPLACE PACKAGE BODY TABLEROS_PKG AS
                         end if;
                     end loop;
             end loop;
+
+        IF IND_PRIMER_PALABRA = 'S' AND IND_CENTRO = 'N' THEN
+            COORDENADAS_VALIDAS := 0;
+        end if;
 
         IF (ES_HORIZONTAL = 1 AND ES_VERTICAL = 1) OR (ES_HORIZONTAL = 0 AND ES_VERTICAL = 0) THEN
             COORDENADAS_VALIDAS := 0;
