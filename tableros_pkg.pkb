@@ -308,6 +308,7 @@ CREATE OR REPLACE PACKAGE BODY TABLEROS_PKG AS
                         LETRA_PUNTAJE := 0;
                     end loop;
 
+                ACTUALIZAR_LETRA_TABLERO_PR(P_ID_TABLERO, P_LETRAS);
                 ELIMINAR_LETRAS_PR(P_ID_TABLERO, P_ID_USUARIO, UPPER(PALABRA_FORMADA));
 
             end if;
@@ -394,5 +395,48 @@ CREATE OR REPLACE PACKAGE BODY TABLEROS_PKG AS
         end if;
     END;
 
+    --Actualizar letra en tablero
+    PROCEDURE ACTUALIZAR_LETRA_TABLERO_PR(P_ID_TABLERO NUMBER, P_LETRAS VARCHAR2) IS
+        POS_X      NUMBER        := 0;
+        POS_Y      NUMBER        := 0;
+        DATO_LETRA VARCHAR2(100) := '';
+        COUNTER    NUMBER        := 0;
+    BEGIN
+
+        FOR i IN (WITH DATA AS
+                           (SELECT P_LETRAS str
+                            FROM dual
+                           )
+                  SELECT trim(regexp_substr(str, '[^-]+', 1, LEVEL)) str
+                  FROM DATA
+                  CONNECT BY instr(str, ',', 1, LEVEL - 1) > 0)
+            LOOP
+                FOR j IN (WITH DATA AS
+                                   (SELECT i.str str
+                                    FROM dual
+                                   )
+                          SELECT trim(regexp_substr(str, '[^,]+', 1, LEVEL)) str
+                          FROM DATA
+                          CONNECT BY instr(str, ',', 1, LEVEL - 1) > 0)
+                    LOOP
+                        IF COUNTER = 2 THEN
+                            DATO_LETRA := j.str;
+                            UPDATE CASILLA
+                            SET LETRA = DATO_LETRA
+                            WHERE ID_TABLERO = P_ID_TABLERO
+                              AND X = POS_X
+                              AND Y = POS_Y;
+                            COUNTER := 0;
+                        ELSE
+                            IF COUNTER = 0 THEN
+                                SELECT TO_NUMBER(j.str) INTO POS_X FROM dual;
+                            ELSIF COUNTER = 1 THEN
+                                SELECT TO_NUMBER(j.str) INTO POS_Y FROM dual;
+                            end if;
+                            COUNTER := COUNTER + 1;
+                        end if;
+                    end loop;
+            end loop;
+    END;
 
 END TABLEROS_PKG;
